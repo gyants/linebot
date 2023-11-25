@@ -5,7 +5,7 @@ const channelSecret = process.env.LINE_CHANNEL_SECRET; // Channel secret string
 
 export const POST = async (req, res) => {
     try {
-      const xLineSignature = req.get("x-line-signature"); // Get the x-line-signature header from the request
+      const xLineSignature = req.headers['x-line-signature']; // Get the x-line-signature header from the request
       const requestBody = await req.json(); // Parse the JSON request body
       
       // Calculate the expected signature
