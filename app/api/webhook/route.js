@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const channelSecret = process.env.LINE_CHANNEL_SECRET; // Channel secret string
 
-export default async function handler(req, res) {
+export const POST = async (req, res) => {
     try {
         const xLineSignature = req.headers['x-line-signature']; // Access the x-line-signature header
         const requestBody = req.body; // In Next.js, the request body is already parsed
@@ -34,4 +34,4 @@ export default async function handler(req, res) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+  }
