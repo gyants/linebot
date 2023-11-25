@@ -1,7 +1,8 @@
 const crypto = require("crypto")
-require('dotenv').config()
 import { Client } from '@line/bot-sdk'
 import { headers } from 'next/headers'
+import { scrapeEvilBoard } from '@/lib/actions';
+import { extractAndToString } from '@/lib/utils';
 
 const client = new Client({
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
@@ -19,7 +20,6 @@ export const POST = async (req) => {
       .createHmac("SHA256", channelSecret)
       .update(JSON.stringify(body))
       .digest("base64");
-    console.log(body)
 
     if (signature !== xLineSignature) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -49,15 +49,29 @@ export const POST = async (req) => {
 };
   
 // Handling each event
-function handleEvent(event) {
+async function handleEvent(event) {
     if (event.type !== 'message' || event.message.type !== 'text') {
         // ignore non-text-message event
         return Promise.resolve(null);
     }
     // Echo text message
-    return client.replyMessage(event.replyToken, {
-        type: 'text',
-        text: event.message.text
-    });
+    const url = new URL("https://www.palm-plaza.com/cgi-bin/CCforum/board.cgi?az=list&forum=DCForumID4&archive=")
+    const topics = await scrapeEvilBoard(url)
+    const topicsString = extractAndToString(topics)
+    
+    const messageText = event.message.text
+    
+    if(!topicsString.includes(messageText)){
+        return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: topicsString
+        });
+    } else {
+        const topicObject = topics.find(obj => obj.topic.includes(messageText))
+        return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: topicObject.url
+        })
+    }
 }
   

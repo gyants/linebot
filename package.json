@@ -11,8 +11,10 @@
   "dependencies": {
     "@line/bot-sdk": "^8.0.2",
     "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
     "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
+    "iconv-lite": "^0.6.3",
     "next": "14.0.3",
     "react": "^18",
     "react-dom": "^18"
