@@ -65,10 +65,10 @@ async function handleEvent(event) {
         const topicToFollow = messageText.includes('follow ') ? messageText.split('follow ')[1] : messageText.split('Follow ')[1]
         const topicObject = topics.find(obj => obj.topic.includes(topicToFollow))
         saveTopicToDB(topicObject)
-        notifyLine(topicObject.topic,'follow')
+        notifyLine(topicObject,'follow')
         return client.replyMessage(event.replyToken, {
             type: 'text',
-            text: `Following ${topicObject.topic}`
+            text: `Following ${topicObject.topicName}`
         })
     } else if(messageText.startsWith('unfollow') || messageText.startsWith('Unfollow')) {
         deleteAllTopic()

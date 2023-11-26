@@ -19,7 +19,7 @@ export async function GET(request) {
         const url = new URL("https://www.palm-plaza.com/cgi-bin/CCforum/board.cgi?az=list&forum=DCForumID4&archive=")
         const scrapedTopics = await scrapeEvilBoard(url)
         const updatedTopics = await Promise.all(scrapedTopics.map(async scrapedTopic => {
-            const matchingTopicInDB = topics.find(topicInDB => topicInDB.topicName === scrapedTopic.topic);
+            const matchingTopicInDB = topics.find(topicInDB => topicInDB.topicName === scrapedTopic.topicName);
           
             if (matchingTopicInDB) {
               if (matchingTopicInDB.replyCount !== scrapedTopic.replyCount) {
