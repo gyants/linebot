@@ -63,7 +63,7 @@ async function handleEvent(event) {
 
     if (messageText.startsWith('follow ') || messageText.startsWith('Follow ')) {
         const topicToFollow = messageText.includes('follow ') ? messageText.split('follow ')[1] : messageText.split('Follow ')[1]
-        const topicObject = topics.find(obj => obj.topic.includes(topicToFollow))
+        const topicObject = topics.find(obj => obj.topicName.includes(topicToFollow))
         saveTopicToDB(topicObject)
         notifyLine(topicObject,'follow')
         return client.replyMessage(event.replyToken, {
