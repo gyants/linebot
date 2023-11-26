@@ -35,15 +35,16 @@ export async function GET(request) {
               }
             }
           }))
-        
         // Notify when updates are found
-        updatedTopics.forEach(topic => {
-            if(topic) notifyLine(topic.topicName, 'update')
+        const filteredUpdatedTopics = updatedTopics.filter(topic => topic !== undefined)
+        console.log(filteredUpdatedTopics)
+        filteredUpdatedTopics.forEach(topic => {
+            notifyLine(topic, 'update')
         })
         
         return NextResponse.json({
             message:'Ok',
-            data: updatedTopics
+            data: filteredUpdatedTopics
         })
         
     } catch (error) {
