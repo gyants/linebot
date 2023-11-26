@@ -1,8 +1,8 @@
 const crypto = require("crypto")
 import { Client } from '@line/bot-sdk'
 import { headers } from 'next/headers'
-import { scrapeEvilBoard } from '@/lib/actions';
-import { extractAndToString } from '@/lib/utils';
+import { notifyLine, scrapeEvilBoard } from '@/lib/actions';
+import { deleteAllTopic, extractAndToString, saveTopicToDB } from '@/lib/utils';
 
 const client = new Client({
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
@@ -60,18 +60,28 @@ async function handleEvent(event) {
     const topicsString = extractAndToString(topics)
     
     const messageText = event.message.text
-    
-    if(!topicsString.includes(messageText)){
+
+    if (messageText.startsWith('follow ') || messageText.startsWith('Follow ')) {
+        const topicToFollow = messageText.includes('follow ') ? messageText.split('follow ')[1] : messageText.split('Follow ')[1]
+        const topicObject = topics.find(obj => obj.topic.includes(topicToFollow))
+        saveTopicToDB(topicObject)
+        notifyLine(topicObject.topic,'follow')
+        return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: `Following ${topicObject.topic}`
+        })
+    } else if(messageText.startsWith('unfollow') || messageText.startsWith('Unfollow')) {
+        deleteAllTopic()
+        return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: 'Unfollowed'
+        })
+    } else if(!topicsString.includes(messageText)){
         return client.replyMessage(event.replyToken, {
             type: 'text',
             text: topicsString
         });
-    } else {
-        const topicObject = topics.find(obj => obj.topic.includes(messageText))
-        return client.replyMessage(event.replyToken, {
-            type: 'text',
-            text: topicObject.url
-        })
     }
+    
 }
   
